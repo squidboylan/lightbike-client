@@ -4,8 +4,8 @@ import gui
 import sys
 
 if __name__ == "__main__":
-    #username = raw_input("Enter your username: ")
-    username = "caleb"
+    username = raw_input("Enter your username: ")
+    #username = "caleb"
     try:
         server_ip = sys.argv[1]
     except:
