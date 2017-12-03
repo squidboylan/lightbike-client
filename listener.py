@@ -1,20 +1,20 @@
 import game
+import gui
+import threading
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 
 class NetClient(DatagramProtocol):
-    def __init__(self, server_ip, server_port, username, gui_obj):
+    def __init__(self, server_ip, server_port, username):
         self.server_ip = server_ip
         self.server_port = server_port
-        self.gui_obj = gui_obj
         self.username = username
 
     def startProtocol(self):
-        self.transport.connect(self.server_ip, self.server_port)
         self.create_game()
 
     def datagramReceived(self, data, (host, port)):
-        split_data = data.split()
+        split_data = data.rstrip().split()
 
         if split_data[0] == "AUTHACK":
             self.auth_ack(split_data)
@@ -26,7 +26,10 @@ class NetClient(DatagramProtocol):
             self.game_update(split_data)
 
     def send_data(self, data):
-        self.transport.write(data)
+        self.transport.write(data, (self.server_ip, self.server_port))
+
+    def update_direction(self, direction):
+        self.send_data("DIRECTION " + self.token + " " + direction)
 
     def auth_ack(self, split_data):
         if split_data[1] == self.username:
@@ -34,6 +37,11 @@ class NetClient(DatagramProtocol):
 
     def auth(self):
         self.send_data("AUTH " + self.username + "\n")
+        print "starting game"
+        self.gui_obj = gui.Gui(self.server_ip, self.server_port, self.username, self)
+        t1 = threading.Thread(target=self.gui_obj.run)
+        t1.start()
+        print "started game"
 
     def create_game(self):
         self.send_data("CREATE 2\n")

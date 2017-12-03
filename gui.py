@@ -5,7 +5,7 @@ import time
 from twisted.internet import reactor
 
 class Gui:
-    def __init__(self, server_ip, server_port, username):
+    def __init__(self, server_ip, server_port, username, listener):
         self.stdscr = curses.initscr()
         curses.start_color()
         curses.noecho()
@@ -20,17 +20,14 @@ class Gui:
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_RED)
         curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLUE)
 
-        self.listener = listener.NetClient(server_ip, server_port, username, self)
+        self.listener = listener
         self.game_board = []
         self.pad = None
 
     def run(self):
-        reactor.listenUDP(0, self.listener)
-        self.t1 = threading.Thread(target=reactor.run())
-        self.t1.start()
-
         while 1:
             if len(self.game_board) != 0:
+                #print self.game_board
                 if not self.pad:
                     self.width = len(self.game_board[0])
                     self.height = len(self.game_board)
@@ -38,14 +35,13 @@ class Gui:
 
                 char = self.stdscr.getch()
                 if char == curses.KEY_UP:
-                    self.listener.send_data("DIRECTION UP\n")
+                    self.listener.update_direction("UP\n")
                 elif char == curses.KEY_RIGHT:
-                    self.listener.send_data("DIRECTION RIGHT\n")
+                    self.listener.update_direction("RIGHT\n")
                 elif char == curses.KEY_DOWN:
-                    self.listener.send_data("DIRECTION DOWN\n")
+                    self.listener.update_direction("DOWN\n")
                 elif char == curses.KEY_LEFT:
-                    self.listener.send_data("DIRECTION LEFT\n")
-
+                    self.listener.update_direction("LEFT\n")
                 self.draw_board()
 
             time.sleep(.001)
@@ -75,6 +71,6 @@ class Gui:
                 except curses.error:
                     pass
 
-                self.pad.refresh(0, 0, 1, 1, self.height, self.width)
+        self.pad.refresh(0, 0, 1, 1, self.height, self.width)
 
         #self.stdscr.redrawwin()

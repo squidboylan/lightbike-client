@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 import gui
+import listener
 import sys
+from twisted.internet import reactor
 
 if __name__ == "__main__":
     username = raw_input("Enter your username: ")
@@ -16,8 +18,6 @@ if __name__ == "__main__":
     except:
         server_port = 9999
 
-    try:
-        client = gui.Gui(server_ip, server_port, username)
-        client.run()
-    finally:
-        client.destroy()
+    client = listener.NetClient(server_ip, server_port, username)
+    reactor.listenUDP(0, client)
+    reactor.run()
