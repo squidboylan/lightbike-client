@@ -25,8 +25,23 @@ class NetClient(DatagramProtocol):
         elif split_data[0] == "UPDATE":
             self.game_update(split_data)
 
+        elif split_data[0] == "WINNER":
+            self.game_end(split_data)
+
     def send_data(self, data):
         self.transport.write(data, (self.server_ip, self.server_port))
+
+    def game_end(self, split_data):
+        self.gui_obj.running = False
+        self.t1.join()
+        self.gui_obj.destroy()
+        self.gui_obj = None
+        winners = ''
+        for i in split_data[1:]:
+            winners = winners + i
+
+        print 'WINNERS: ' + winners
+
 
     def update_direction(self, direction):
         self.send_data("DIRECTION " + self.token + " " + direction)
@@ -39,8 +54,8 @@ class NetClient(DatagramProtocol):
         self.send_data("AUTH " + self.username + "\n")
         print "starting game"
         self.gui_obj = gui.Gui(self.server_ip, self.server_port, self.username, self)
-        t1 = threading.Thread(target=self.gui_obj.run)
-        t1.start()
+        self.t1 = threading.Thread(target=self.gui_obj.run)
+        self.t1.start()
         print "started game"
 
     def create_game(self):

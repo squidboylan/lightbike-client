@@ -23,13 +23,14 @@ class Gui:
         self.listener = listener
         self.game_board = []
         self.pad = None
+        self.running = True
 
     def run(self):
-        while 1:
+        while self.running:
             if len(self.game_board) != 0:
                 #print self.game_board
                 if not self.pad:
-                    self.width = len(self.game_board[0])
+                    self.width = len(self.game_board[0]) * 2
                     self.height = len(self.game_board)
                     self.pad = curses.newpad(self.height, self.width)
 
@@ -52,22 +53,27 @@ class Gui:
         self.stdscr.keypad(0)
         curses.echo()
         curses.endwin()
+        curses.curs_set(2)
 
     def draw_board(self):
         for i in range(len(self.game_board)):
             for j in range(len(self.game_board[i])):
                 try:
                     if self.game_board[i][j] == "0":
-                        self.pad.addch(i, j, 32, curses.color_pair(4))
+                        self.pad.addch(i, j * 2, 32, curses.color_pair(4))
+                        self.pad.addch(i, j * 2 + 1, 32, curses.color_pair(4))
 
                     elif self.game_board[i][j] == "1":
-                        self.pad.addch(i, j, 32, curses.color_pair(1))
+                        self.pad.addch(i, j * 2, 32, curses.color_pair(1))
+                        self.pad.addch(i, j * 2 + 1, 32, curses.color_pair(1))
 
                     elif self.game_board[i][j] == "E":
-                        self.pad.addch(i, j, 32, curses.color_pair(2))
+                        self.pad.addch(i, j * 2, 32, curses.color_pair(2))
+                        self.pad.addch(i, j * 2 + 1, 32, curses.color_pair(2))
 
                     elif self.game_board[i][j] == "P":
-                        self.pad.addch(i, j, 32, curses.color_pair(3))
+                        self.pad.addch(i, j * 2, 32, curses.color_pair(3))
+                        self.pad.addch(i, j * 2 + 1, 32, curses.color_pair(3))
                 except curses.error:
                     pass
 
