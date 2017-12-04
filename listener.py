@@ -1,4 +1,3 @@
-import game
 import gui
 import threading
 from twisted.internet.protocol import DatagramProtocol
