@@ -5,6 +5,7 @@ import time
 from twisted.internet import reactor
 
 class Gui:
+    # Setup our class and curses so we can provide a TUI for the user
     def __init__(self, server_ip, server_port, username, listener):
         self.stdscr = curses.initscr()
         curses.start_color()
@@ -25,6 +26,7 @@ class Gui:
         self.pad = None
         self.running = True
 
+    # Game loop
     def run(self):
         while self.running:
             if len(self.game_board) != 0:
@@ -48,6 +50,7 @@ class Gui:
             time.sleep(.001)
 
 
+    # Disable curses
     def destroy(self):
         curses.nocbreak()
         self.stdscr.keypad(0)
@@ -55,6 +58,7 @@ class Gui:
         curses.endwin()
         curses.curs_set(2)
 
+    # Draw the board using curses based on the board the server has provided us
     def draw_board(self):
         for i in range(len(self.game_board)):
             for j in range(len(self.game_board[i])):
