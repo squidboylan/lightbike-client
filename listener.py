@@ -44,7 +44,7 @@ class NetClient(DatagramProtocol):
         self.gui_obj = None
         winners = ''
         for i in split_data[1:]:
-            winners = winners + i
+            winners = winners + i + " "
 
         print 'WINNERS: ' + winners
 
