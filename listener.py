@@ -78,4 +78,4 @@ class NetClient(DatagramProtocol):
             tmp_board.append(list(i))
 
         self.gui_obj.game_board = tmp_board
-        #print tmp_board
+        self.gui_obj.time_since_update = 0

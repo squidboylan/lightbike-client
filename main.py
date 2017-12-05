@@ -12,7 +12,7 @@ if __name__ == "__main__":
     try:
         game_size = sys.argv[1]
     except:
-        game_size = "127.0.0.1"
+        game_size = '2'
 
     try:
         server_ip = sys.argv[2]

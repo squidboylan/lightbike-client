@@ -25,12 +25,20 @@ class Gui:
         self.game_board = []
         self.pad = None
         self.running = True
+        self.time_since_update = 0
 
     # Game loop
     def run(self):
         while self.running:
             if len(self.game_board) != 0:
-                #print self.game_board
+                if self.time_since_update >= 2000:
+                    self.destroy()
+                    print 'Server disconnected, please try again later'
+                    self.listener.gui_obj = None
+                    return
+
+                self.time_since_update = self.time_since_update + 1
+
                 if not self.pad:
                     self.width = len(self.game_board[0]) * 2
                     self.height = len(self.game_board)
